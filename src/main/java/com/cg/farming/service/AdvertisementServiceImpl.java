@@ -55,4 +55,17 @@ public class AdvertisementServiceImpl implements IAdvertisementService {
 		return advertisements;
 	}
 
+	@Override
+	public Advertisement statusAdvertisement(int advId) throws AdvertisementNotFoundException{
+		Optional<Advertisement> advtOpt = advtRepo.findById(advId);
+		
+		if (advtOpt.isPresent()) {
+			Advertisement advt=advtOpt.get();
+			advt.setStatus(true);
+			return advtRepo.save(advt);
+		} else {
+			throw new AdvertisementNotFoundException("Advertisement not found with given id: " + advId);
+		}
+	}
+
 }

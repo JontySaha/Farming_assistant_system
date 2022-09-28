@@ -10,4 +10,5 @@ public interface IAdvertisementService {
 	Advertisement updateAdvertisement(int id,Advertisement advt) throws AdvertisementNotFoundException;
 	Advertisement deleteAdvertisement(int id) throws AdvertisementNotFoundException; 
 	List<Advertisement> getAllAdvertisement();
+	Advertisement statusAdvertisement(int advId) throws AdvertisementNotFoundException;
 }

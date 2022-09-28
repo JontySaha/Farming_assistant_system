@@ -13,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import com.cg.farming.entity.Advertisement;
 import com.cg.farming.entity.Complaint;
 import com.cg.farming.entity.Role;
 import com.cg.farming.entity.User;
+import com.cg.farming.exception.AdvertisementNotFoundException;
 import com.cg.farming.repo.IRoleRepo;
 import com.cg.farming.repo.IUserRepo;
 import com.cg.farming.service.AdvertisementServiceImpl;
@@ -103,4 +105,11 @@ public class FarmerController {
 		return new ResponseEntity<>(ck, HttpStatus.CREATED); 
 	}
     
+    @PreAuthorize("hasRole('ROLE_FARMER')")
+    @RequestMapping(value="/statusAdv/{id}", method = RequestMethod.POST)
+    ResponseEntity<Advertisement> statusAdvertisement(@PathVariable("id") int advId) throws AdvertisementNotFoundException {
+    	Advertisement statusAdv = advService.statusAdvertisement(advId);
+		logger.info(statusAdv);
+		return new ResponseEntity<>(statusAdv, HttpStatus.OK); // 200 Ok
+	}
 }

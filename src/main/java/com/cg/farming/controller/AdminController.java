@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cg.farming.dto.LoginDto;
 import com.cg.farming.entity.Complaint;
+import com.cg.farming.exception.ComplaintNotFoundException;
 import com.cg.farming.service.ComplaintServiceImpl;
 
 @RestController
@@ -49,5 +51,13 @@ public class AdminController {
     public ResponseEntity<List<Complaint>> getAllComplaint() {
 		List<Complaint> comp = compServ.getAllComplaint();
 		return new ResponseEntity<>(comp, HttpStatus.OK);
+	}
+    
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @RequestMapping(value="/resolveComplaint/{id}", method = RequestMethod.POST)
+    ResponseEntity<Complaint> resolveComplaint(@PathVariable("id") int complaintId) throws ComplaintNotFoundException {
+    	Complaint resolvedComp = compServ.resolveComplaint(complaintId);
+		logger.info(resolvedComp);
+		return new ResponseEntity<>(resolvedComp, HttpStatus.OK); // 200 Ok
 	}
 }
