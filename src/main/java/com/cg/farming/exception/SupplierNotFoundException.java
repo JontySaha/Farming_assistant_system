@@ -1,12 +1,13 @@
 package com.cg.farming.exception;
 
-public class UserNotFoundException extends Exception{
+public class SupplierNotFoundException extends Exception{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public UserNotFoundException(String msg) {
+	public SupplierNotFoundException(String msg) {
 		super(msg);
 	}
+
 }
