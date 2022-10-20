@@ -14,32 +14,11 @@ public class SupplierServiceImpl implements ISupplierService {
 
 	@Autowired
 	ISupplierRepo supplierRepository;
-	
-	@Override
-	public Supplier updateSupplier(int id, Supplier supplier) throws SupplierNotFoundException {
-		Optional<Supplier> supplierOpt = supplierRepository.findById(id);
-
-		if (supplierOpt.isPresent()) {
-			Supplier supplierDetails = supplierOpt.get();
-			supplierDetails.setName(supplier.getName());
-			supplierDetails.setAddress(supplier.getAddress());
-			supplierDetails.setPhoneNo(supplier.getPhoneNo());
-		    return supplierRepository.save(supplierDetails);
-		} else {
-			throw new SupplierNotFoundException("Supplier not found with given id: " + id);
-		}
-	}
 
 	@Override
-	public Supplier deleteSupplier(int id) throws SupplierNotFoundException {
-		Optional<Supplier> supplierOpt = supplierRepository.findById(id);
-		if (supplierOpt.isPresent()) {
-			Supplier supplierDetails = supplierOpt.get();
-			supplierRepository.deleteById(id);
-			return supplierDetails;
-		} else {
-			throw new SupplierNotFoundException("Supplier not found with given id: " + id);
-		}
+	public Supplier viewSupplierByUsername(String username) {
+		// TODO Auto-generated method stub
+		return supplierRepository.viewSupplierByUsername(username);
 	}
 
 }

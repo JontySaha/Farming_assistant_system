@@ -8,8 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -38,20 +38,20 @@ public class User {
 	@Size(max = 50)
 	private String password;
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})
     @JoinTable(name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<Role> roles;
 	
 	@OneToOne(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
+            cascade =  {CascadeType.REMOVE,CascadeType.PERSIST,CascadeType.MERGE},
             mappedBy = "user")
 	@JsonIgnore
     private Farmer farmer;
 	
 	@OneToOne(fetch = FetchType.LAZY,
-            cascade =  CascadeType.ALL,
+            cascade =  {CascadeType.REMOVE,CascadeType.PERSIST},
             mappedBy = "user")
 	@JsonIgnore
     private Supplier supplier;

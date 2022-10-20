@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class Advertisement {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private int advid;
 	@NotBlank(message = "cropType is mandatory")
 	@Size(max = 30)
 	private String cropType;
@@ -31,6 +31,7 @@ public class Advertisement {
 	@NotBlank(message = "price is mandatory")
 	@Size(max = 30)
 	private String price;
+	private String name;
 	private boolean status=false;
 	
 }

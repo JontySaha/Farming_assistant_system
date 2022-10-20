@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ import com.cg.farming.entity.Role;
 import com.cg.farming.entity.User;
 import com.cg.farming.exception.AdvertisementNotFoundException;
 import com.cg.farming.exception.FarmerNotFoundException;
+import com.cg.farming.exception.UserNotFoundException;
 import com.cg.farming.repo.IRoleRepo;
 import com.cg.farming.repo.IUserRepo;
 import com.cg.farming.service.AdvertisementServiceImpl;
@@ -41,7 +43,7 @@ import com.cg.farming.service.ComplaintServiceImpl;
 import com.cg.farming.service.FarmerServiceImpl;
 import com.cg.farming.service.UserServiceImpl;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/farmer")
 public class FarmerController {
@@ -100,8 +102,8 @@ public class FarmerController {
                 loginDto.getUsername(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        logger.info(authentication);
-        return new ResponseEntity<>(authentication.getAuthorities(), HttpStatus.OK);
+       // logger.info(authentication);
+        return new ResponseEntity<>(authentication, HttpStatus.OK);
     }
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)  
@@ -113,38 +115,33 @@ public class FarmerController {
          return "Logout Successfully";  
      }  
     
-    @PreAuthorize("hasRole('ROLE_FARMER')")
-    @RequestMapping(value="/updateDetails/{id}", method = RequestMethod.PUT)
-    ResponseEntity<Farmer> updateFarmer(@Valid @PathVariable("id") int farmerId, @RequestBody Farmer farmer) throws FarmerNotFoundException {
-    	Farmer updatedFarmer = farmerService.updateFarmer(farmerId, farmer);
-		return new ResponseEntity<>(updatedFarmer, HttpStatus.OK); // 200 Ok
+    
+    @GetMapping("/viewFarmer/{username}")
+	ResponseEntity<Farmer> viewFarmerByUsername(@PathVariable("username")String username) {
+    	Farmer farmer = farmerService.viewFarmerByUsername(username);
+    	logger.info((username));
+		return new ResponseEntity<>(farmer, HttpStatus.OK);
 	}
     
-    @PreAuthorize("hasRole('ROLE_FARMER')")
-    @RequestMapping(value="/deleteDetails/{id}", method = RequestMethod.DELETE)
-    ResponseEntity<Farmer> deleteFarmer(@PathVariable("id") int farmerId) throws FarmerNotFoundException {
-    	Farmer farmer = farmerService.deleteFarmer(farmerId);
-		return new ResponseEntity<>(farmer, HttpStatus.OK); // 200 Ok
-	}
-    
-    @PreAuthorize("hasRole('ROLE_FARMER')")
+    //@PreAuthorize("hasRole('ROLE_FARMER')")
     @RequestMapping(value="/getAllAdvertisement", method = RequestMethod.GET)
     ResponseEntity<List<Advertisement>> getAllAdvertisement() {
 		List<Advertisement> advertisements= advService.getAllAdvertisement();
 		return new ResponseEntity<>(advertisements, HttpStatus.OK); // 200 ok
 	}
     
-    @PreAuthorize("hasRole('ROLE_FARMER')")
+    //@PreAuthorize("hasRole('ROLE_FARMER')")
     @RequestMapping(value="/addComplaint", method = RequestMethod.POST)
 	public ResponseEntity<Complaint> addComplaint(@Valid @RequestBody Complaint complaint) {
 		Complaint ck =compServ.addComplaint(complaint);
 		return new ResponseEntity<>(ck, HttpStatus.CREATED); 
 	}
     
-    @PreAuthorize("hasRole('ROLE_FARMER')")
+    //@PreAuthorize("hasRole('ROLE_FARMER')")
     @RequestMapping(value="/statusAdvertisement/{id}", method = RequestMethod.POST)
     ResponseEntity<Advertisement> statusAdvertisement(@PathVariable("id") int advId) throws AdvertisementNotFoundException {
     	Advertisement statusAdv = advService.statusAdvertisement(advId);
 		return new ResponseEntity<>(statusAdv, HttpStatus.OK); // 200 Ok
 	}
+
 }

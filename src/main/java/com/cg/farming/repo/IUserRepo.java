@@ -9,6 +9,7 @@ import com.cg.farming.entity.User;
 
 @Repository
 public interface IUserRepo extends JpaRepository<User,Integer>{
-	Optional<User> findByUsername(String username);
-	boolean existsByUsername(String username);
+	 Optional<User> findByUsername(String username);
+	 Boolean existsByUsername(String username);
+	
 }

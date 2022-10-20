@@ -24,6 +24,7 @@ public class Complaint {
 	@NotBlank
 	@Size(max = 240)
 	private String complaint;
+	private String username;
 	private boolean status=false;
 	
 }

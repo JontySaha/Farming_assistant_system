@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cg.farming.dto.LoginDto;
 import com.cg.farming.dto.SignUpDto;
 import com.cg.farming.entity.Advertisement;
+import com.cg.farming.entity.Farmer;
 import com.cg.farming.entity.Role;
 import com.cg.farming.entity.Supplier;
 import com.cg.farming.entity.User;
@@ -36,7 +38,7 @@ import com.cg.farming.service.AdvertisementServiceImpl;
 import com.cg.farming.service.SupplierServiceImpl;
 import com.cg.farming.service.UserServiceImpl;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {
@@ -90,7 +92,7 @@ public class SupplierController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>(authentication.getAuthorities(), HttpStatus.OK);
+        return new ResponseEntity<>(authentication, HttpStatus.OK);
     }
     
     @RequestMapping(value="/logout", method=RequestMethod.GET)  
@@ -102,35 +104,28 @@ public class SupplierController {
          return "Logout Successfully";  
      }  
     
-    @PreAuthorize("hasRole('ROLE_SUPPLIER')")
-    @RequestMapping(value="/updateDetails/{id}", method = RequestMethod.PUT)
-    ResponseEntity<Supplier> updateSupplier(@Valid @PathVariable("id") int supplierId, @RequestBody Supplier supplier) throws SupplierNotFoundException {
-    	Supplier updatedSupplier = supplierService.updateSupplier(supplierId, supplier);
-		return new ResponseEntity<>(updatedSupplier, HttpStatus.OK); // 200 Ok
+    @GetMapping("/viewSupplier/{username}")
+	ResponseEntity<Supplier> viewSupplierByUsername(@PathVariable("username")String username) {
+    	Supplier supplier = supplierService.viewSupplierByUsername(username);
+		return new ResponseEntity<>(supplier, HttpStatus.OK);
 	}
+   
     
-    @PreAuthorize("hasRole('ROLE_SUPPLIER')")
-    @RequestMapping(value="/deleteDetails/{id}", method = RequestMethod.DELETE)
-    ResponseEntity<Supplier> deleteSupplier(@PathVariable("id") int supplierId) throws SupplierNotFoundException {
-    	Supplier supplier = supplierService.deleteSupplier(supplierId);
-		return new ResponseEntity<>(supplier, HttpStatus.OK); // 200 Ok
-	}
-    
-    @PreAuthorize("hasRole('ROLE_SUPPLIER')")
+ //   @PreAuthorize("hasRole('ROLE_SUPPLIER')")
     @RequestMapping(value="/addAdvertisement", method = RequestMethod.POST)
 	ResponseEntity<Advertisement> addAdvertisement(@RequestBody Advertisement advt) {
 		Advertisement newAdvt = advService.addAdvertisement(advt);
 		return new ResponseEntity<>(newAdvt, HttpStatus.CREATED); // 201 created 
 	}
 	
-    @PreAuthorize("hasRole('ROLE_SUPPLIER')")
+  //  @PreAuthorize("hasRole('ROLE_SUPPLIER')")
     @RequestMapping(value="/updateAdvertisement/{advId}", method = RequestMethod.PUT)
 	ResponseEntity<Advertisement> updateAdvertisement(@Valid @PathVariable("advId") int advId, @RequestBody Advertisement advt) throws AdvertisementNotFoundException {
 		Advertisement updatedAdvt = advService.updateAdvertisement(advId, advt);
 		return new ResponseEntity<>(updatedAdvt, HttpStatus.OK); // 200 Ok
 	}
 	
-    @PreAuthorize("hasRole('ROLE_SUPPLIER')")
+ //   @PreAuthorize("hasRole('ROLE_SUPPLIER')")
     @RequestMapping(value="/deleteAdvertisement/{advId}", method = RequestMethod.DELETE)
 	ResponseEntity<Advertisement> deleteAdvertisement(@PathVariable("advId") int advId) throws AdvertisementNotFoundException{
 		Advertisement adv = advService.deleteAdvertisement(advId);

@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,9 +29,12 @@ import com.cg.farming.entity.Complaint;
 import com.cg.farming.exception.ComplaintNotFoundException;
 import com.cg.farming.service.ComplaintServiceImpl;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+	
+	private static Logger logger = LogManager.getLogger();
 	
 	@Autowired
     private AuthenticationManager authenticationManager;
@@ -38,11 +44,12 @@ public class AdminController {
 
     
 	@RequestMapping(value="/signin", method = RequestMethod.POST)
-    public ResponseEntity<String> authenticateUser(@Valid @RequestBody LoginDto loginDto){
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsername(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+        logger.info(authentication);
+        return new ResponseEntity<>(authentication, HttpStatus.OK);
     }
 	
 	@RequestMapping(value="/logout", method=RequestMethod.GET)  
@@ -54,14 +61,14 @@ public class AdminController {
          return "Logout Successfully";  
     }  
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/getAllComplaint", method = RequestMethod.GET)
     public ResponseEntity<List<Complaint>> getAllComplaint() {
 		List<Complaint> comp = compServ.getAllComplaint();
 		return new ResponseEntity<>(comp, HttpStatus.OK);
 	}
     
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //@PreAuthorize("hasRole('ROLE_ADMIN')")
     @RequestMapping(value="/resolveComplaint/{id}", method = RequestMethod.POST)
     ResponseEntity<Complaint> resolveComplaint(@Valid @PathVariable("id") int complaintId) throws ComplaintNotFoundException {
     	Complaint resolvedComp = compServ.resolveComplaint(complaintId);
